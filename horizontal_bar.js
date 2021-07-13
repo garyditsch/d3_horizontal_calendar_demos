@@ -8,6 +8,8 @@ const data = [
     {date: 7/6/2021, value: 16}
 ]
 
+// https://scrimba.com/scrim/cast-1953?pl=pEKMsN
+
 d3.select("#bar_chart")
     .selectAll("div")
     .data(data)
