@@ -9,11 +9,12 @@ const data = [
     {date: 7/2/2021, value: 8},
     {date: 7/3/2021, value: 6},
     {date: 7/4/2021, value: 14},
-    {date: 7/6/2021, value: 16}
+    {date: 7/6/2021, value: 16},
+    {date: 7/7/2021, value: 16}
 ]
 
 //  the size of the overall svg element
-const height = 200;
+const height = 300;
 const width = 720;
 
 //  the width of each bar and the offset between each bar
@@ -39,6 +40,7 @@ d3.select('#bar_chart').append('svg')
             return i * (barWidth + barOffset);
         })
         .attr('y', function (data) {
+            console.log(height - data.value * 10)
             return height - data.value * 10;
         })
         .text(d => d.value)
