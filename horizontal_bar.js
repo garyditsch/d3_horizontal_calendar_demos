@@ -1,3 +1,7 @@
+// https://bost.ocks.org/mike/join/
+// https://vegibit.com/create-a-bar-chart-with-d3-javascript/
+// vegibit tutorial has issues with style on rects
+
 console.log(d3)
 
 const data = [
@@ -8,10 +12,33 @@ const data = [
     {date: 7/6/2021, value: 16}
 ]
 
-d3.select("#bar_chart")
-    .selectAll("div")
+//  the size of the overall svg element
+const height = 200;
+const width = 720;
+
+//  the width of each bar and the offset between each bar
+const barWidth = 40;
+const barOffset = 20;
+
+
+d3.select('#bar_chart').append('svg')
+  .attr('width', width)
+  .attr('height', height)
+  .style('background', '#dff0d8')
+  .selectAll('rect')
     .data(data)
-        .enter()
-        .append("div")
-        .style("width", d => d.value * 10 + "px")
-        .text(d => d.value);
+    .enter().append('rect')
+        .style('fill', '#fff')
+        .style('stroke', '#000')
+        .style('stroke-width', '2')
+        .attr('width', barWidth)
+        .attr('height', function (data) {
+            return data.value * 10;
+        })
+        .attr('x', function (data, i) {
+            return i * (barWidth + barOffset);
+        })
+        .attr('y', function (data) {
+            return height - data.value * 10;
+        })
+        .text(d => d.value)
