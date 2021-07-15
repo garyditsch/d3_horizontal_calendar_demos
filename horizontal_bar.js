@@ -1,51 +1,46 @@
+// https://bost.ocks.org/mike/join/
+// https://vegibit.com/create-a-bar-chart-with-d3-javascript/
+// vegibit tutorial has issues with style on rects
+
 console.log(d3)
 
 const data = [
-    { date: 7/1/2021, value: 10 },
-    { date: 7/2/2021, value: 8 },
-    { date: 7/3/2021, value: 6 },
-    { date: 7/4/2021, value: 14 },
-    { date: 7/6/2021, value: 16 }
+    {date: 7/1/2021, value: 10},
+    {date: 7/2/2021, value: 8},
+    {date: 7/3/2021, value: 6},
+    {date: 7/4/2021, value: 14},
+    {date: 7/6/2021, value: 16},
+    {date: 7/7/2021, value: 16}
 ]
 
-const width = 420;
+//  the size of the overall svg element
+const height = 300;
+const width = 720;
 
-const x = d3.scaleLinear()
-            .domain([0, d3.max(data, d => { return d.value})])
-            .range([0, width])
+//  the width of each bar and the offset between each bar
+const barWidth = 40;
+const barOffset = 20;
 
-console.log(x(8))
 
-const y = d3.scaleBand()
-            .domain(d3.range(data.length))
-            .range([0, 20 * data.length])
-
-console.log(data.length)
-
-const svg = d3.select("#bar_chart")
-    .attr("width", width)
-    .attr("height", y.range()[1])
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "10")
-    .attr("text-anchor", "end");
-
-const bar = svg.selectAll("g")
+d3.select('#bar_chart').append('svg')
+  .attr('width', width)
+  .attr('height', height)
+  .style('background', '#dff0d8')
+  .selectAll('rect')
     .data(data)
-    .join("g")
-    .attr("transform", (d, i) => `translate(0,${y(i)})`);
-
-console.log(bar)
-
-bar.append("rect")
-    .attr("fill", "steelblue")
-    .attr("width", x)
-    .attr("height", y.bandwidth() - 1);
-
-console.log(bar)
-
-bar.append("text")
-    .attr("fill", "white")
-    .attr("x", x(16) - 3)
-    .attr("y", (y.bandwidth() - 1) / 2)
-    .attr("dy", "0.35em")
-    .text(d => d.value);
+    .enter().append('rect')
+        .style('fill', '#fff')
+        .style('stroke', '#000')
+        .style('stroke-width', '2')
+        .attr('width', barWidth)
+        .attr('height', function (data) {
+            return data.value * 10;
+        })
+        .attr('x', function (data, i) {
+            return i * (barWidth + barOffset);
+        })
+        .attr('y', function (data) {
+            console.log(height - data.value * 10)
+            return height - data.value * 10;
+        })
+        .text(d => d.value)
