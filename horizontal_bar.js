@@ -21,6 +21,16 @@ const width = 720;
 const barWidth = 40;
 const barOffset = 20;
 
+const yScale = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.value)])
+    .range([0,height])
+
+const xScale = d3.scaleBand()
+    .domain(d3.range(0, data.length))
+    .range([0, width])
+
+console.log((data, i) => xScale(i))
+
 
 d3.select('#bar_chart').append('svg')
   .attr('width', width)
@@ -32,15 +42,8 @@ d3.select('#bar_chart').append('svg')
         .style('fill', '#fff')
         .style('stroke', '#000')
         .style('stroke-width', '2')
-        .attr('width', barWidth)
-        .attr('height', function (data) {
-            return data.value * 10;
-        })
-        .attr('x', function (data, i) {
-            return i * (barWidth + barOffset);
-        })
-        .attr('y', function (data) {
-            console.log(height - data.value * 10)
-            return height - data.value * 10;
-        })
+        .attr('width', xScale())
+        .attr('height', (data) => yScale(data.value))
+        .attr('x', (data, i) => xScale(i))
+        .attr('y', (data) => { return height - yScale(data.value)})
         .text(d => d.value)
