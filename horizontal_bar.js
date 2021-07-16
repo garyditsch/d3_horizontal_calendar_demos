@@ -14,46 +14,57 @@ const data = [
 ]
 
 //  the size of the overall svg element
-const height = 300;
-const width = 500;
+const margin = { top: 10, right: 10, bottom: 100, left: 40 };
+const width = 700 - margin.left - margin.right;
+const height = 500 - margin.top - margin.bottom;
 
-//  the width of each bar and the offset between each bar
-const barWidth = 40;
-const barOffset = 20;
 
-const yScale = d3.scaleLinear()
+const xScale = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.value)])
-    .range([0,height])
+    .range([0,width])
 
-const xScale = d3.scaleBand()
+const yScale = d3.scaleBand()
     .domain(data.map(d => d.date))
-    .range([0, width])
+    .range([0, height])
+    .padding(0.1)
 
 console.log(data)
 
 let chart = d3.select('svg')
 
 chart
-  .attr('width', width)
-  .attr('height', height)
+  .attr('width', width + margin.left + margin.right)
+  .attr('height', height + margin.top + margin.bottom)
   .style('background', '#dff0d8')
-  .selectAll('rect')
+  .append('g')
+    .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+chart
+    .append('g')
+    .selectAll('rect')
     .data(data)
     .enter().append('rect')
         .style('fill', '#fff')
         .style('stroke', '#000')
         .style('stroke-width', '1')
-        .attr('width', d => xScale.bandwidth())
-        .attr('height', (data) => yScale(data.value))
-        .attr('x', data => xScale(data.date))
-        .attr('y', (data) => { return height - yScale(data.value)})
+        .attr('height', yScale.bandwidth)
+        .attr('width', (data) => xScale(data.value))
+        .attr('y', data => yScale(data.date))
+        .attr('x', (data) => { return width - xScale(data.value)})
         .text(d => d.value)
 
-chart.append('g')
-    .attr('transform', `translate(0, ${height})`)
-    .call(d3.axisBottom(xScale))
-    .selectAll('text')
-        .style('text-anchor', 'end')
-        .style('font-size', '18px')
-        .style('color', '#000')
-        .attr('transform', 'rotate(-45) translate(-10, -5)')
+chart
+    .append('g')
+    .call(d3.axisLeft(yScale));
+
+
+
+// chart
+//     .append('g')
+//     .attr('transform', `translate(0, ${height})`)
+//     .call(d3.axisBottom(xScale))
+//     .selectAll('text')
+//         .style('text-anchor', 'end')
+//         .style('font-size', '10px')
+//         .style('color', '#000')
+//         .attr('transform', 'rotate(-90) translate(-10, -5)')
