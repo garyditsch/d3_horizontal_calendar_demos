@@ -2,50 +2,68 @@
 // https://vegibit.com/create-a-bar-chart-with-d3-javascript/
 // vegibit tutorial has issues with style on rects
 
-console.log(d3)
+// console.log(d3)
 
 const data = [
-    {date: 7/1/2021, value: 10},
-    {date: 7/2/2021, value: 8},
-    {date: 7/3/2021, value: 6},
-    {date: 7/4/2021, value: 14},
-    {date: 7/6/2021, value: 16},
-    {date: 7/7/2021, value: 16}
+    {date: '7/1/2021', value: 10},
+    {date: '7/2/2021', value: 8},
+    {date: '7/3/2021', value: 6},
+    {date: '7/4/2021', value: 14},
+    {date: '7/6/2021', value: 16},
+    {date: '7/7/2021', value: 16}
 ]
 
 //  the size of the overall svg element
-const height = 300;
-const width = 720;
+const margin = { top: 10, right: 20, bottom: 35, left: 60 };
+const width = 700 - margin.left - margin.right;
+const height = 500 - margin.top - margin.bottom;
 
-const yScale = d3.scaleLinear()
-    .domain([0, d3.max(data, (d) => d.value)])
+
+const xScale = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.value)])
+    .range([0,width])
+
+const yScale = d3.scaleBand()
+    .domain(data.map(d => d.date))
     .range([0, height])
+    .padding(0.1)
 
-const xScale = d3.scaleOrdinal()
-    .domain(d3.range(0, d => d.value))
-    .bandwidth([0, width])
+console.log(data)
 
-//  the width of each bar and the offset between each bar
-const barWidth = 40;
-const barOffset = 20;
+let chart = d3.select('svg')
 
-
-d3.select('#bar_chart').append('svg')
-  .attr('width', width)
-  .attr('height', height)
+chart
+  .attr('width', width + margin.left + margin.right)
+  .attr('height', height + margin.top + margin.bottom)
   .style('background', '#dff0d8')
-  .selectAll('rect')
+  .append('g')
+    .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+chart
+    .append('g')
+    .selectAll('rect')
     .data(data)
     .enter().append('rect')
         .style('fill', '#fff')
-        .style('stroke', 'blue')
-        .style('stroke-width', '2')
-        .attr('width', barWidth)
-        .attr('height', (d) => yScale(d.value))
-        .attr('x', function (data, i) {
-            return i * (barWidth + barOffset);
-        })
-        .attr('y', function (d) {
-            return height - yScale(d.value)
-        })
-        .text(d => d.value)
+        .style('stroke', '#000')
+        .style('stroke-width', '1')
+        .attr('height', yScale.bandwidth)
+        .attr('width', (data) => xScale(data.value))
+        .attr('y', data => yScale(data.date))
+        .attr('x', 0 + margin.left)
+
+chart
+    .append('g')
+    .call(d3.axisLeft(yScale))
+    .attr('transform', `translate(${margin.left})`)
+
+
+
+chart
+    .append('g')
+    .attr('transform', `translate(${margin.left}, ${height})`)
+    .call(d3.axisBottom(xScale))
+    .selectAll('text')
+        .style('text-anchor', 'end')
+        .style('font-size', '10px')
+        .style('color', '#000')
