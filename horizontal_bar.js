@@ -2,7 +2,7 @@
 // https://vegibit.com/create-a-bar-chart-with-d3-javascript/
 // vegibit tutorial has issues with style on rects
 
-console.log(d3)
+// console.log(d3)
 
 const data = [
     {date: '7/1/2021', value: 10},
@@ -14,7 +14,7 @@ const data = [
 ]
 
 //  the size of the overall svg element
-const margin = { top: 10, right: 10, bottom: 100, left: 40 };
+const margin = { top: 10, right: 20, bottom: 35, left: 60 };
 const width = 700 - margin.left - margin.right;
 const height = 500 - margin.top - margin.bottom;
 
@@ -50,21 +50,20 @@ chart
         .attr('height', yScale.bandwidth)
         .attr('width', (data) => xScale(data.value))
         .attr('y', data => yScale(data.date))
-        .attr('x', (data) => { return width - xScale(data.value)})
-        .text(d => d.value)
+        .attr('x', 0 + margin.left)
 
 chart
     .append('g')
-    .call(d3.axisLeft(yScale));
+    .call(d3.axisLeft(yScale))
+    .attr('transform', `translate(${margin.left})`)
 
 
 
-// chart
-//     .append('g')
-//     .attr('transform', `translate(0, ${height})`)
-//     .call(d3.axisBottom(xScale))
-//     .selectAll('text')
-//         .style('text-anchor', 'end')
-//         .style('font-size', '10px')
-//         .style('color', '#000')
-//         .attr('transform', 'rotate(-90) translate(-10, -5)')
+chart
+    .append('g')
+    .attr('transform', `translate(${margin.left}, ${height})`)
+    .call(d3.axisBottom(xScale))
+    .selectAll('text')
+        .style('text-anchor', 'end')
+        .style('font-size', '10px')
+        .style('color', '#000')
