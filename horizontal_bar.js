@@ -17,6 +17,14 @@ const data = [
 const height = 300;
 const width = 720;
 
+const yScale = d3.scaleLinear()
+    .domain([0, d3.max(data, (d) => d.value)])
+    .range([0, height])
+
+const xScale = d3.scaleOrdinal()
+    .domain(d3.range(0, d => d.value))
+    .bandwidth([0, width])
+
 //  the width of each bar and the offset between each bar
 const barWidth = 40;
 const barOffset = 20;
@@ -30,17 +38,14 @@ d3.select('#bar_chart').append('svg')
     .data(data)
     .enter().append('rect')
         .style('fill', '#fff')
-        .style('stroke', '#000')
+        .style('stroke', 'blue')
         .style('stroke-width', '2')
         .attr('width', barWidth)
-        .attr('height', function (data) {
-            return data.value * 10;
-        })
+        .attr('height', (d) => yScale(d.value))
         .attr('x', function (data, i) {
             return i * (barWidth + barOffset);
         })
-        .attr('y', function (data) {
-            console.log(height - data.value * 10)
-            return height - data.value * 10;
+        .attr('y', function (d) {
+            return height - yScale(d.value)
         })
         .text(d => d.value)
